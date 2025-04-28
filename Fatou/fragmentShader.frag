@@ -1,4 +1,6 @@
-﻿#version 330 core
+﻿#version 400
+
+precision highp float;
 
 in vec2 position;
 
@@ -15,15 +17,24 @@ vec2 squareImaginary(vec2 im) {
     );
 }
 
-float iterateMandelbrot(vec2 coord) {
+vec3 colourForIterations(int iteration) {
+    float i = log(float(iteration)) / log(float(MAX_ITERATIONS)) * 255.0;
+    float r = sin(0.024 * i + 0) * 0.5 + 0.5;
+    float g = sin(0.024 * i + 2) * 0.1 + 0.5;
+    float b = sin(0.024 * i + 4) * 0.5 + 0.5;
+
+    return vec3(r, g, b);
+}
+
+vec3 iterateMandelbrot(vec2 coord) {
     vec2 z = vec2(0, 0);
     for (int i = 0; i < MAX_ITERATIONS; i++) {
         z = squareImaginary(z) + coord;
         if (length(z) >= 2.0) {
-            return float(i) / float(MAX_ITERATIONS);
+            return colourForIterations(i);
         }
     }
-    return 1.0;
+    return vec3(0.0);
 }
 
 void main(void) {
@@ -33,7 +44,7 @@ void main(void) {
         renderBounds.y + (position.y + 1.0) / 2.0 * (renderBounds.w - renderBounds.y)
     );
 
-    float colour = iterateMandelbrot(coordinate);
+    vec3 colour = iterateMandelbrot(coordinate);
 
-    out_Colour = vec4(colour, colour, colour, 1);
+    out_Colour = vec4(colour, 1);
 }

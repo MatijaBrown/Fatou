@@ -176,7 +176,7 @@ namespace Fatou
             shader.Stop();
 
             // Render ImGUI
-            //_imGuiController.Render();
+            _imGuiController.Render();
         }
 
         private void Close()
